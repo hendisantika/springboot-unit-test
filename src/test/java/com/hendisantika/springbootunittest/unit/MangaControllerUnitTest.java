@@ -4,10 +4,12 @@ import com.hendisantika.springbootunittest.controller.MangaController;
 import com.hendisantika.springbootunittest.model.Manga;
 import com.hendisantika.springbootunittest.service.MangaService;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,6 +17,12 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /**
@@ -60,6 +68,18 @@ public class MangaControllerUnitTest {
         mangas = new ArrayList<>();
         mangas.add(manga1);
         mangas.add(manga2);
+    }
+
+    @Test
+    public void testSearchSync() throws Exception {
+
+        // Mocking service
+        when(mangaService.getMangasByTitle(any(String.class))).thenReturn(mangas);
+
+        mockMvc.perform(get("/manga/sync/ken").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title", is("Hokuto no ken")))
+                .andExpect(jsonPath("$[1].title", is("Yumekui Kenbun")));
     }
 
 }
