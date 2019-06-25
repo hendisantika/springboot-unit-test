@@ -1,12 +1,15 @@
 package com.hendisantika.springbootunittest.integration;
 
 import com.hendisantika.springbootunittest.controller.MangaController;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,8 +25,17 @@ import org.springframework.web.context.WebApplicationContext;
 public class MangaControllerIntegrationTest {
     @Autowired
     protected WebApplicationContext wac;
+
     // @Autowired
     MockMvc mockMvc;
+
     @Autowired
     MangaController mangaController;
+
+    @Before
+    public void setup() throws Exception {
+        this.mockMvc = standaloneSetup(this.mangaController).build();// Standalone context
+        // mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+        // .build();
+    }
 }
